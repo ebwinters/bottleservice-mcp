@@ -5,7 +5,7 @@
     "command": "uv",
     "args": [
         "--directory",
-        "C:\\Users\\ebwin\\repos\\bottleservice-mcp",
+        "C:\\....\\bottleservice-mcp",
         "run",
         "main.py",
         "--username",
