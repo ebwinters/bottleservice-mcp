@@ -13,5 +13,5 @@
         "--password",
         "BOTTLESERVICE_PASSWORD"
     ]
-    }
+}
 ```

@@ -34,7 +34,6 @@ def get_token():
             data = json.load(f)
             if data.get("expires_at", 0) > time.time():
                 return data["access_token"]
-    # Request new token from Supabase Auth API using global USERNAME and PASSWORD
     resp = requests.post(
         TOKEN_URL,
         headers={"apikey": PUBLIC_KEY, "Content-Type": "application/json"},
@@ -42,7 +41,6 @@ def get_token():
     )
     resp.raise_for_status()
     token_data = resp.json()
-    # Save token with expiry time to cache
     token_data["expires_at"] = time.time() + token_data.get("expires_in", 3600) - 60
     with open(TOKEN_CACHE, "w") as f:
         json.dump(token_data, f)
@@ -87,7 +85,6 @@ def main():
     parser.add_argument("--password", type=str, required=True, help="Supabase password")
     args = parser.parse_args()
 
-    # Set global variables for username and password so they can be used in get_token
     global USERNAME, PASSWORD
     USERNAME = args.username
     PASSWORD = args.password
