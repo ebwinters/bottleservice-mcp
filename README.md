@@ -1,3 +1,5 @@
+This MCP server works with your bottle collection from the [bottle service web app](https://bottleservice.vercel.app/#). Make an account to add bottles to your bar shelf
+
 ## Quick Setup
 1. Clone repo
 
@@ -18,8 +20,3 @@
         ]
     }
     ```
-
-## Website
-
-Add bottles to your bar here: https://bottleservice.vercel.app/#
-
