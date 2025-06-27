@@ -46,10 +46,35 @@ def get_token():
         json.dump(token_data, f)
     return token_data["access_token"]
 
+from typing import Literal
+
+BottleCategory = Literal[
+    "",
+    "Whiskey",
+    "Rum",
+    "Gin",
+    "Vodka",
+    "Tequila",
+    "Brandy",
+    "Liqueur",
+    "Mezcal",
+    "Schnapps",
+    "Absinthe",
+    "Other",
+    "Bitters",
+    "Vermouth",
+    "Fruits/Juices",
+    "Syrups",
+    "Mixers",
+]
+
 @mcp.tool()
-def get_user_bottles():
+def get_user_bottles(category: BottleCategory = ""):
     """
     Retrieve all bottles for the user on their bar shelf.
+
+    Args:
+        category (str, optional): The category of bottle to filter by. Defaults to "".
 
     Returns:
         list: List of bottle details, each containing name, category, and subcategory.
@@ -67,6 +92,8 @@ def get_user_bottles():
         return []
     ids_str = ",".join(map(str, ids))
     url = BOTTLES_URL.format(ids=ids_str)
+    if category:
+        url += f"&category=eq.{category}"
     resp = requests.get(
         url,
         headers={"apikey": PUBLIC_KEY, "Authorization": f"Bearer {token}"}
