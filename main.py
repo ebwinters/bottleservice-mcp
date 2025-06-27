@@ -15,6 +15,7 @@ PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 TOKEN_URL = "https://xxckpfkcabiaulshekyb.supabase.co/auth/v1/token?grant_type=password"
 SHELF_BOTTLES_URL = "https://xxckpfkcabiaulshekyb.supabase.co/rest/v1/shelf_bottles?select=bottle_id"
 BOTTLES_URL = "https://xxckpfkcabiaulshekyb.supabase.co/rest/v1/bottles?id=in.({ids})&select=name,category,subcategory"
+CUSTOM_BOTTLES_URL = "https://xxckpfkcabiaulshekyb.supabase.co/rest/v1/custom_bottles?id=in.({ids})&select=name,category,subcategory"
 TOKEN_CACHE = ".token_cache.json"
 
 def get_token():
@@ -71,7 +72,7 @@ BottleCategory = Literal[
 @mcp.tool()
 def get_user_bottles(category: BottleCategory = ""):
     """
-    Retrieve all bottles for the user on their bar shelf.
+    Retrieve all bottles for the user on their bar shelf, including custom bottles.
 
     Args:
         category (str, optional): The category of bottle to filter by. Defaults to "".
@@ -80,17 +81,18 @@ def get_user_bottles(category: BottleCategory = ""):
         list: List of bottle details, each containing name, category, and subcategory.
     """
     token = get_token()
+    # Get shelf bottle IDs
     resp = requests.get(
         SHELF_BOTTLES_URL,
         headers={"apikey": PUBLIC_KEY, "Authorization": f"Bearer {token}"}
     )
-
     resp.raise_for_status()
     ids = [item["bottle_id"] for item in resp.json()]
     logger.info(f"Retrieved {len(ids)} bottle IDs from shelf_bottles")
     if not ids:
         return []
     ids_str = ",".join(map(str, ids))
+    # Get regular bottles
     url = BOTTLES_URL.format(ids=ids_str)
     if category:
         url += f"&category=eq.{category}"
@@ -103,6 +105,17 @@ def get_user_bottles(category: BottleCategory = ""):
     formatted = [
         f"{bottle['name']} ({bottle['category']}/{bottle['subcategory']})"
         for bottle in bottles
+    ]
+    url = CUSTOM_BOTTLES_URL.format(ids=ids_str)
+    resp = requests.get(
+        url,
+        headers={"apikey": PUBLIC_KEY, "Authorization": f"Bearer {token}"}
+    )
+    resp.raise_for_status()
+    custom_bottles = resp.json()
+    formatted += [
+        f"{bottle['name']} (Custom/{bottle['subcategory']})"
+        for bottle in custom_bottles
     ]
     return "\n".join(formatted)
 
