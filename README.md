@@ -1,4 +1,5 @@
 <img src="https://raw.githubusercontent.com/ebwinters/bottleservice/refs/heads/main/src/assets/bottle_logo.jpg" width="100">
+
 This MCP server works with your bottle collection from the [bottle service web app](https://bottleservice.vercel.app/#). Make an account to add bottles to your bar shelf
 
 
